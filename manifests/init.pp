@@ -37,7 +37,7 @@ class riak {
 		ensure => present,
 		owner => 'root',
 		group => 'root',
-		source => '/tmp/files/app.config',
+		source => 'puppet:///modules/riak/app.config',
 		subscribe => Exec['riak-install']
 	}
 
