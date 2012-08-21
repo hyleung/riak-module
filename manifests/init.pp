@@ -20,11 +20,7 @@ class riak {
 		"openssl":
 		ensure => installed
 	}
-	$pem_file = 'cert.pem'
-	$key_file = 'key.pem'
-	exec { "/usr/bin/openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout $key_file -out $pem_file -subj  '/CN=com.foresee'":
-            cwd => "/etc/riak/",
-            creates => "/etc/riak/ssl/$pem_file"}
+
 
 	#install libssl
 	package { "libssl0.9.8":
@@ -42,6 +38,15 @@ class riak {
 		user => root,
 		subscribe => Exec['wget-riak']
 	}
+
+	#SSL certs for Riak Control
+	$pem_file = 'cert.pem'
+	$key_file = 'key.pem'
+	exec { "/usr/bin/openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout $key_file -out $pem_file -subj  '/CN=com.foresee'":
+            cwd => "/etc/riak/",
+            creates => "/etc/riak/ssl/$pem_file",
+            subscribe=> Exec['riak-install']
+    }
 
 	#riak config file
 	file { '/etc/riak/app.config':
